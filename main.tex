@@ -1,0 +1,58 @@
+
+\input{auxiliary/preamble}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%% begin of document %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\frontmatter
+\title{\bf \huge Notas de Aula: \\
+        Desenho de Mercados}
+\author{Pedro Henrique Chaves Maia}
+\date{Atualizado em \today \\ (\href{https://gvmail-my.sharepoint.com/:b:/g/personal/b30993_fgv_edu_br/EdV2A8MLs21Fto6W-hhC1M0Be7SeWx1q7JrGajWqVmkwbw?e=iTQJT1}{{\sc Versão mais atualizada}})}
+\maketitle
+\setcounter{tocdepth}{2}
+
+\begin{multicols*}{2}
+    \tableofcontents
+    \label{toc-contents}
+\end{multicols*}
+
+%%%%%%%%%%%%%% minitoc $%%%%%%%%%%%
+\etocsettocstyle{\vskip-2\baselineskip\noindent\rule{\linewidth}{0.5pt}\vskip0.3\baselineskip}%
+    {\noindent\rule{\linewidth}{0.5pt}\vskip0.5\baselineskip}
+    
+%%%%%%%%%%%%%%% Content %%%%%%%%%%%%%%%
+\mainmatter % separates the number of toc and mainmatter
+\input{./chapter/preface.tex}
+
+\part{Matemática}
+\input{./chapter/math.tex}
+
+\part{Economia da Eletricidade}
+\include{./chapter/central}
+\include{./chapter/tempo}
+\include{./chapter/descentr}
+\include{./chapter/market_fail}
+\include{./chapter/invest}
+\include{./chapter/transmit}
+\include{./chapter/env}
+
+%\part{Physics}
+%\input{./chapter/quantum_mechanics.tex}
+% \input{./chapter/quantum_field_theory.tex}
+
+%\begin{appendices}
+%\input{./chapter/appendix_formula.tex}
+%\end{appendices}
+
+\backmatter
+
+%%%%%%%%%%%%%%% Reference %%%%%%%%%%%%%%%
+
+\printbibliography[heading=bibintoc]
+\printindex
+
+\end{document}
+

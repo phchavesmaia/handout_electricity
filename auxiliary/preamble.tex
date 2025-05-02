@@ -1,0 +1,164 @@
+% !TeX root = main.tex
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% preamble %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[11pt,openany,a4paper]{book}
+\usepackage[mono=false]{libertine} % new linux font, ignore mono
+\usepackage{luatex85}
+%\renewcommand{\baselinestretch}{1.05}
+\usepackage{amsmath,amsthm,amssymb,mathrsfs,amsfonts,dsfont,bbm}
+\usepackage{epsfig,graphicx}
+\usepackage{tabularx}
+\usepackage{blkarray}
+\usepackage{slashed}
+\usepackage{xcolor}
+\usepackage{csquotes}
+\usepackage{listings,soul}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{ragged2e}% \usepackage{fullpage}
+\usepackage{lipsum} % provides dummy text for testing
+\usepackage[toc,title,titletoc,header]{appendix}
+\usepackage{etoc} 
+\etocsetnexttocdepth{subsection}
+\usepackage{multicol} % two-col ToC
+\usepackage{bm}
+\usepackage{imakeidx} % before hyperref
+\usepackage{hyperref}
+\usepackage[brazilian]{babel}
+% link colors settings
+\definecolor{magentao}{rgb}{.75, 0, .25 } 
+\hypersetup{
+	colorlinks=true, linkcolor = black, urlcolor=magentao, citecolor=magentao
+ %[rgb]{0.0, 0.14, 0.6}
+}
+\usepackage[capitalise]{cleveref}
+\usepackage{enumitem}
+\usepackage{mathtools}
+\usepackage{physics}
+\usepackage[linesnumbered,ruled,vlined,algosection]{algorithm2e}
+\SetCommentSty{textsf}
+\usepackage{epigraph}
+\epigraphwidth=1.0\linewidth
+\epigraphrule=0pt
+
+% adjust margin
+\usepackage[margin=2.3cm]{geometry}
+\headheight13.6pt
+
+%%%%%%%%%%%%%%%% thmtools %%%%%%%%%%%%%%%%%%%%%
+\usepackage{thmtools}
+\declaretheorem[numberwithin=chapter]{theorem}
+\declaretheorem[numberwithin=chapter]{axiom}
+\declaretheorem[numberwithin=chapter]{lemma}
+%\declaretheorem[numberwithin=chapter]{proposição}
+\declaretheorem[numberwithin=chapter]{claim}
+\declaretheorem[numberwithin=chapter]{conjecture}
+\declaretheorem[sibling=theorem]{corollary}
+\declaretheorem[style=definition]{definição}
+\declaretheorem[numberwithin=chapter, style=definition]{problem}
+\declaretheorem[numberwithin=chapter, style=definition]{example}
+\declaretheorem[numberwithin=chapter, style=definition]{exercise}
+\declaretheorem[numberwithin=chapter, style=definition]{observation}
+\declaretheorem[numberwithin=chapter, style=definition]{fact}
+\declaretheorem[numberwithin=chapter, style=definition]{construction}
+\declaretheorem[numberwithin=chapter, style=definition]{remark}
+\declaretheorem[numberwithin=chapter, style=remark]{question}
+%%%%%%%%%%%%%%%% thmtools %%%%%%%%%%%%%%%%%%%%%
+\usepackage{changepage}
+\newenvironment{solution}
+    {\renewcommand\qedsymbol{$\square$}\color{blue}\begin{adjustwidth}{0em}{2em}\begin{proof}[\textit Solution.~]}
+    {\end{proof}\end{adjustwidth}}
+
+%%%%%%%%%%%%%%%% index %%%%%%%%%%%%%%%%%%%%%
+\begin{filecontents}{index.ist}
+% https://tex.stackexchange.com/questions/65247/index-with-an-initial-letter-of-the-group
+headings_flag 1
+heading_prefix "{\\centering\\large \\textbf{"
+heading_suffix "}}\\nopagebreak\n"
+delim_0 "\\nobreak\\dotfill"
+\end{filecontents}
+\newcommand{\myindex}[1]{\index{#1} \emph{#1}}
+\makeindex[columns=3, intoc, title=Alphabetical Index, options= -s index.ist]
+%%%%%%%%%%%%%%%% index %%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%% ToC %%%%%%%%%%%%%%%%%%%%%
+% Link Chapter title to ToC: https://tex.stackexchange.com/questions/32495/linking-the-section-text-to-the-toc
+\usepackage[explicit]{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\huge\bfseries}{\chaptertitlename\ {\thechapter}}{20pt}{\hyperlink{chap-\thechapter}{\huge#1}
+\addtocontents{toc}{\protect\hypertarget{chap-\thechapter}{}}}
+\titleformat{name=\chapter,numberless}
+  {\normalfont\huge\bfseries}{}{-20pt}{\huge#1}
+
+
+%%%%%%%%%%%%%%%%%%% fancyhdr %%%%%%%%%%%%%%%%%
+\usepackage{fancyhdr}
+\pagestyle{fancy} % enable fancy page style
+\renewcommand{\headrulewidth}{0.0pt} % comment if you want the rule
+\fancyhf{} % clear header and footer
+\fancyhead[lo,le]{\leftmark}
+\fancyhead[re,ro]{\rightmark}
+\fancyfoot[CE,CO]{\hyperref[toc-contents]{\thepage}}
+
+% https://tex.stackexchange.com/questions/550520/making-each-page-number-link-back-to-beginning-of-chapter-or-section
+\makeatletter
+\def\chaptermark#1{\markboth{\protect\hyper@linkstart{link}{\@currentHref}{Capítulo \thechapter ~ #1}\protect\hyper@linkend}{}}
+\def\sectionmark#1{\markright{\protect\hyper@linkstart{link}{\@currentHref}{\thesection ~ #1}\protect\hyper@linkend}}
+\makeatother
+%%%%%%%%%%%%%%%%%%% fancyhdr %%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%% biblatex %%%%%%%%%%%%%%%%%
+\usepackage[doi=false,url=false,isbn=false,style=authoryear,backend=biber,backref=true]{biblatex}
+\addbibresource{bib.bib}
+
+\newbibmacro{string+doiurlisbn}[1]{%
+  \iffieldundef{doi}{%
+    \iffieldundef{url}{%
+      \iffieldundef{isbn}{%
+        \iffieldundef{issn}{%
+          #1%
+        }{%
+          \href{http://books.google.com/books?vid=ISSN\thefield{issn}}{#1}%
+        }%
+      }{%
+        \href{http://books.google.com/books?vid=ISBN\thefield{isbn}}{#1}%
+      }%
+    }{%
+      \href{\thefield{url}}{#1}%
+    }%
+  }{%
+    \href{http://dx.doi.org/\thefield{doi}}{#1}%
+  }%
+}
+
+% https://tex.stackexchange.com/questions/94089/remove-quotes-from-inbook-reference-title-with-biblatex
+\DeclareFieldFormat[article,incollection,inproceedings,book,misc]{title}{\usebibmacro{string+doiurlisbn}{\mkbibemph{#1}}}
+% https://tex.stackexchange.com/questions/454672/biblatex-journal-name-non-italic
+\DeclareFieldFormat{journaltitle}{#1\isdot}
+\DeclareFieldFormat{booktitle}{#1\isdot}
+% https://tex.stackexchange.com/questions/10682/suppress-in-biblatex
+\renewbibmacro{in:}{}
+% add video field: https://tex.stackexchange.com/questions/111846/biblatex-2-custom-fields-only-one-is-working
+\DeclareSourcemap{
+    \maps[datatype=bibtex]{
+      \map{
+        \step[fieldsource=video]
+        \step[fieldset=usera,origfieldval]
+    }
+  }
+}
+\DeclareFieldFormat{usera}{\href{#1}{\textsc{Online video}}}
+\AtEveryBibitem{
+    \csappto{blx@bbx@\thefield{entrytype}}{% put at end of entry
+        \iffieldundef{usera}{}{\space \printfield{usera}}
+    }
+}
+
+\input{auxiliary/macros.tex}
+
+\newtheorem{prop}{Proposição}
+\newtheorem{defin}{Definição}
+\newtheorem{teo}{Teorema}

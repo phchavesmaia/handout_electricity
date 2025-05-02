@@ -1,0 +1,188 @@
+\chapter{Condições de Karush-Kuhn-Tucker (KKT) \label{kkt}}
+
+\localtableofcontents % local TOC <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<,
+
+
+Na otimização matemática, as condições de Karush-Kuhn-Tucker (KKT), também conhecidas como condições de Kuhn-Tucker, são testes de primeira derivada (às vezes chamados de condições necessárias de primeira ordem) para que uma solução em programação não linear seja ótima, desde que alguns condições de regularidade são satisfeitas. Permitindo restrições de desigualdade, a abordagem KKT para programação não linear generaliza o método dos multiplicadores de Lagrange, limitado à restrições de igualdade. Semelhante à abordagem de Lagrange, o problema de maximização (minimização) restrita é reescrito como uma função de Lagrange cujo ponto ótimo é um ponto de sela.
+
+O argumento aqui construído é fortemente baseado nas notas de aula de \textcite{tibshirani_convex_2015}.
+
+\section{Problema Dual}
+\subsection{Construção}
+Suponha o problema de programação não linear:
+\begin{align*}
+    \min_{x \in \mathbb{R}^n}&\quad f(x)\\
+    \text{s.a.}&\quad h_i(x) \le b_i, i = 1,..m\\
+    &\quad l_j(x)  = k_j, j = 1,...r 
+\end{align*}
+onde as funções acima não precisam ser, necessariamente, convexas. Podemos escrever o Lagrangiano:
+\begin{align*}
+    \mathcal{L}(x,\lambda,\mu)  = f(x) + \sum_i\lambda_i(h_i(x)-b_i) + \sum_j\mu_j(l_j(x)-k_j)
+\end{align*}
+Restrinja $\lambda_i$ a ser não-negativo. Uma propriedade do Lagrangiano é:
+\begin{align*}
+    f(x) \ge \mathcal{L}(x,\lambda,\mu)
+\end{align*}
+Onde $x$ é factível. Ou seja, $\mathcal{L}$ é um limite inferior de $f(x)$ sobre o conjunto factível $C$. Minimizando dos dois lados temos:
+\begin{align*}
+    f^* \ge \min_{x \in C}\mathcal{L}(x,\lambda,\mu) \ge \min_{x \in \mathbb{R}^n}\mathcal{L}(x,\lambda,\mu) \equiv g(\lambda,\mu)
+\end{align*}
+onde $g(\lambda,\mu)$ é chamada de \textit{função dual}, que informa um limite inferior do valor ótimo $f^*$ para o problema primal. Para obter o melhor limite inferior, $g$ é maximizando sobre $\lambda,\mu$, implicando o problema dual
+\begin{align*}
+    \max_{\lambda \in \mathbb{R}^m, \mu \in \mathbb{R}^r}&\quad g(\lambda,\mu)\\
+    \text{s.a.}&\quad \lambda\geq0
+\end{align*}
+
+\subsection{Propriedades}
+\paragraph{Dualidade Fraca} Por construção, $f^* \ge g^*$  é sempre verdade (mesmo se o problema primal não for convexo).
+\paragraph{Convexidade do Problema Dual} O problema dual é sempre convexo i.e. $g$ é sempre côncava (novamente, mesmo se o problema primal não for convexo). 
+\paragraph{Condição de Slater} Para problemas primals convexos, se existe um $x$ tal que $h_i(x)<b_i$ e $l_j(x)=k_j$ para todo $i,j$, então temos \textbf{dualidade forte} i.e. $f^*=g^*$.
+
+\subsection{Distância de Dualidade (Duality Gap)}
+Dado um primal factível $x$ e dual factível $\lambda, \mu$, a quantidade
+\[ f(x) - g(\lambda,\mu)\]
+é chamada de distância de dualidade entre $x$ e $\lambda, \mu$. Note que
+\[  f(x) - f(x^*) \ge  f(x) - g(\lambda, \mu)\]
+por construção. Logo, se a distância de dualidade for zero, então $x$ é ótimo primal (e, da mesma forma, $\lambda, \mu$ são ótimos duais). 
+\medskip
+
+\noindent\fbox{%
+    \parbox{\textwidth}{%
+        Note que, do ponto de vista algorítmico, fornece um critério de parada: 
+        \medskip
+        
+        se $f(x) - g(\lambda, \mu) \le \varepsilon$, então garantimos que $f(x) - f^* \le \varepsilon$. Muito útil, especialmente em conjunto com métodos iterativos!
+    }%
+}
+\section{Condições Karush-Kuhn-Tucker (KKT)} 
+Seja um problema primal tal qual descrito na seção anterior. Temos que as condições KKT são:
+\begin{enumerate}
+    \item \textbf{Estacionariedade}: $\partial\mathcal{L}(x)\in0$ ou, mais comumente representado, $\frac{\partial\mathcal{L}}{\partial x_n}=0$ para todo $n=1,...,N$. Indica que $x$ minimiza o Lagrangiano sobre todo $x$.
+    \item \textbf{Frouxidão Complementar}: $\lambda_i\cdot h_i(x) = 0$ para todo $i$. Se $h_i(x)$ for estritamente menor que zero, então $\lambda_i = 0$. Se $h_i(x)$ igual a zero, então $\lambda_i$ pode assumir qualquer valor.
+    \item \textbf{Factibilidade Primal}: $h_i(x) \le b_i$, $l_j(x) = k_j$ para todo $i, j$.
+    \item \textbf{Factibilidade Dual}: $\lambda_i\geq0$ para todo $i$.
+\end{enumerate}
+Seguem abaixo duas importantes proposições:
+\paragraph{Proposição 1} (Necessidade) Se $x^*$ e $\lambda^*,\mu^*$ são soluções primais e duais, com distância de dualidade zero, então $x^*$, $\lambda^*,\mu^*$ satisfazem as condições KKT.
+
+\paragraph{Proposição 2} (Suficiência) Se $x^*$ e $\lambda^*,\mu^*$ satisfazem as condições KKT, então $x^*$, $\lambda^*,\mu^*$ são soluções primais e duais.
+
+Ou seja, para problemas convexos (Condição de Slater valendo), temos que $x^*$, $\lambda^*,\mu^*$ são soluções primais e duais se, e somente se, atendem às condições KKT.
+
+\section{Exemplos}
+\begin{enumerate}
+    \item[1)] Resolva o seguinte problema de otimização não-linear:
+        \begin{align*}
+            \max_{x,y\in\mathbb{R}}&\quad f(x,y)=xy \\
+            \text{s.a.}&\quad x+y^2\le 2\\
+            &\quad x,y\geq0
+        \end{align*}
+        \textbf{Resposta:}
+        \textcolor{magentao}{
+        Observe que a região factível é limitada, então um máximo global deve existir: uma função contínua em um conjunto fechado e limitado possui, sempre, um máximo global (Teorema do Valor Extremo). Mais ainda, repare que $f(x,y)$ é uma função convexa, logo as condições KKT são suficientes para encontrar os máximos globais. Vamos reescrever o problema em termos que já estamos acostumados:
+        \begin{align*}
+            \min_{x,y\in\mathbb{R}}&\quad -xy \\
+            \text{s.a.}&\quad x+y^2\le 2\\
+            &\quad -x\le0\\
+            &\quad -y\le0
+        \end{align*}
+        Implicando o Lagrangiano
+        \begin{align*}
+            \mathcal{L}(x,y,\lambda_1,\lambda_2,\lambda_3) = -xy + \lambda_1 (x+y^2-2) + \lambda_2(-x-0) + \lambda_3(-y-0)
+        \end{align*}
+        Vamos enunciar as condições KKT:
+        \begin{enumerate}
+            \item \textbf{Estacionariedade}:
+            \begin{align*}
+                \frac{\partial\mathcal{L}}{\partial x} &= -y+\lambda_1-\lambda_2 = 0\\
+                \frac{\partial\mathcal{L}}{\partial y} &= -x +2\lambda_1y - \lambda_3 = 0
+            \end{align*}
+            \item \textbf{Frouxidão Complementar}: 
+            \begin{align*}
+                 \lambda_1 (x+y^2-2) &= 0 \\
+                 -\lambda_2x &= 0 \\
+                 -\lambda_2y &= 0 
+            \end{align*}
+            \item \textbf{Factibilidade Primal}
+            \begin{align*}
+                x+y^2 &\le 2\\
+                -x&\le0\\
+                -y&\leq0
+            \end{align*}
+            \item \textbf{Factibilidade Dual:}
+            \begin{align*}
+                \lambda_1,\lambda_2,\lambda_3\ge0
+            \end{align*}
+        \end{enumerate}
+        Seja $n$ o número de restrições. Pela natureza do sistema acima, sempre teremos $2^n$ possíveis casos a considerar (equivalente a 8 casos, nesse exemplo). Entretanto, refletindo sobre o problema podemos reduzir esse número substancialmente:
+        \begin{enumerate}
+            \item[\textbf{Caso 1}] \underline{Suponha que $\lambda_1 = 0$}. Então a primeira condição KKT implica $y + \lambda_2 = 0$ e a segunda $x + \lambda_3 = 0$. Como cada termo é não negativo, a única maneira de isso acontecer é se $x = y = \lambda_2 = \lambda_3 = 0$. De fato, as condições KKT são satisfeitas quando $x = y = \lambda_1 = \lambda_2 = \lambda_3 = 0$ (embora claramente este não seja um máximo local, já que $f(0, 0) = 0$ enquanto existem $x,y$ no interior da região factível t.q. $f(x, y) > 0$ - (1,1), por exemplo).
+            \item[\textbf{Caso 2}] \underline{Suponha $\lambda_1 \neq 0$ i.e. $x + y^2 = 2$}. Para que isso seja possível, note que deve valer $x = 2 - y^2>0$ ou $y>0$.
+            \begin{enumerate}
+                \item[\textbf{Caso 2a)}] \underline{Suponha que $x > 0$}. Então $\lambda_2 = 0$. A primeira condição KKT implica $\lambda_1 = y$. A segunda condição KKT implica $x - 2y\lambda_1 + \lambda_3 = 2 - 3y^2 + \lambda_3 = 0$, então $3y^2 = 2 + \lambda_3 > 0$, e $\lambda_3 = 0$. Portanto, $y = \sqrt{2/3}$ e $x = 2 - 2/3 = 4/3$. Repare que, por construção, todas as condições KKT são satisfeitas.
+                \item[\textbf{Caso 2b)}] \underline{Suponha que $x = 0$}, ou seja, $y = \sqrt{2}$. Como $y > 0$ temos $\lambda_3 = 0$. A partir da segunda condição KKT, devemos ter $\lambda_1 = 0$, mas isso nos leva de volta ao Caso 1. Concluímos que há apenas dois candidatos a um máximo local: $(0, 0)$ e$(4/3,\sqrt{2/3})$. O máximo global é em $(4/3,\sqrt{2/3})$.
+            \end{enumerate}
+        \end{enumerate}
+        }
+    \item[2)] Resolva o seguinte problema de otimização não-linear:
+    \begin{align*}
+        \max_{x_1,x_2\in\mathbb{R}}&\quad f(x_1,x_2)=3.6x_1 -0.4x_1^2+1.6x_2-0.2x_2^2\\
+        \text{s.a.}&\quad 2x_1 + x_2\le10\\
+        &\quad x_1,x_2\ge0
+    \end{align*}
+    \textbf{Resposta}:
+    \textcolor{magentao}{
+    Tal qual no item anterior, repare que a função acima é contínua sendo maximizada num conjunto compacto - portanto há máximo global. Mais ainda, é uma função convexa, logo KKT é condição necessária e suficiente. Começamos reescrevendo o problema:
+    \begin{align*}
+            \min_{x,y\in\mathbb{R}}&\quad-3.6x_1 +0.4x_1^2-1.6x_2+0.2x_2^2\\
+            \text{s.a.}&\quad 2x_1 + x_2\le10\\
+            &\quad x_1,x_2\ge0
+    \end{align*}
+    Repare que no último exercício as condições de factibilidade primal de positividade dos argumentos de $f(\cdot,\cdot)$ poderiam ser ignoradas (e com isso $\lambda_2$ e $\lambda_3$). Isso é geralmente verdade para problemas convexos e, portanto, ignorarei os multiplicadores de Lagrange deles nesse item (recomendo que sempre façam isso). O Lagrangiano será, portanto:
+    \begin{align*}
+        \mathcal{L}(x_1,x_2,\lambda) =  -3.6x_1 +0.4x_1^2-1.6x_2+0.2x_2^2 + \lambda(2x_1 + x_2-10)
+    \end{align*}
+    Implicando as seguintes restrições
+    \begin{align*}
+        \begin{aligned}
+        -3.6+0.8x_1+2\lambda = 0\\
+        -1.6 +0.4x_2+\lambda=0 
+        \end{aligned} &&
+        \left. \begin{aligned}
+           \text{ }\\
+           \text{ }
+        \end{aligned}  \right\rbrace && \qquad \text{\textbf{Estacionariedade}}\\
+        \begin{aligned}
+            \lambda(2x_1 + x_2-10)=0
+        \end{aligned} &&
+         \left. \begin{aligned}
+           \text{ }
+        \end{aligned}  \right\rbrace && \qquad \text{\textbf{Frouxidão Complementar}}\\
+        \begin{aligned}
+            \lambda\ge0
+        \end{aligned} &&
+        \left. \begin{aligned}
+           \text{ }
+        \end{aligned}  \right\rbrace && \qquad \text{\textbf{Factibilidade Dual}}\\
+        \begin{aligned}
+            2x_1 + x_2\le10\\
+            x_1,x_2\ge0
+        \end{aligned} && 
+        \left. \begin{aligned}
+           \text{ }\\
+           \text{ }
+        \end{aligned}  \right\rbrace && \qquad \text{\textbf{Factibilidade Primal}}\\
+    \end{align*}
+    Temos, portanto, apenas dois casos:
+    \begin{enumerate}
+        \item[\textbf{Caso 1)}] \underline{Seja $\lambda=0$}. Das condições de estacionariedade temos que $x_1=4.5$ e $x_2 = 4$. Repare que, para esses valores, a primeira condição de factibilidade primal não valerá. Portanto, essa resposta não pode ser solução para o problema.
+        \item[\textbf{Caso 2}] \underline{Seja $\lambda\neq0$ i.e. $2x_1 + x_2=10$}. Como só temos 2 casos e sabemos, pelo Teorema do Valor Extremo, que existe solução, essa é deve ser a resposta. Das condições de estacionariedade temos $x_1=\frac{3.6-2\lambda}{0.8}$ e $x_2=\frac{1.6-\lambda}{0.4}$. Usando que $2x_1 + x_2=10$ temos que $\lambda=0.4$. Aplicando em $x_1$ e $x_2$ encontramos $(x_1,x_2)=(3.5,3)$. Note que todas as condições KKT são atendidas e, portanto, esse é o máximo do problema primal.
+    \end{enumerate}
+    }
+\end{enumerate}
+\section{Interpretação dos Multiplicadores de Lagrange}
+Os multiplicadores de Lagrange $\lambda$ são mais que, apenas, mecanismos matemáticos para recuperar os parâmetros desejados. A interpretação exata dessa variável depende do contexto em específico da questão, entretanto, é possível ter alguma informação sobre a intuição dela da derivação matemática do Lagrangiano. Repare que (pensando no problema de otimização no começo da lista):
+\begin{align*}
+    \frac{\partial\mathcal{L}}{\partial b_i} = \lambda_i
+\end{align*}
+Ou seja, $\lambda_i$ informa a taxa de crescimento instantânea do Lagrangiano quando relaxamos a restrição $b_i$ em um $\varepsilon$ infinitesimal. Em outras palavras, o multiplicador representa os ganhos líquidos marginais de se relaxar a respectiva restrição. Ou ainda, o multiplicador de Lagrange fornece a taxa de variação da solução para o problema de maximização restrita à medida em que a restrição varia. 
